@@ -1,26 +1,57 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
+import Room from './views/Room';
+import Login from './views/Login';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import './App.css';
 
-function App() {
+const ProtectedRoute = ({ component: Comp, loggedIn, path, ...rest }) => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Route
+      path={path}
+      {...rest}
+      render={props => {
+        return loggedIn ? <Comp {...props} /> : <Redirect to="/" />;
+      }}
+    />
   );
+};
+
+class App extends Component {
+
+  checkLoggedIn = () => {
+    let token = sessionStorage.getItem("token");
+
+    if (token !== null) {
+      // do something to validate token here  
+      return true
+    } else {
+      return false
+    }
+  }
+
+  render() {
+    return (
+      <BrowserRouter>
+        <div>
+          <Switch>
+            <Route
+              exact
+              path="/"
+              render={props => <Login {...props} />}
+            />
+            <ProtectedRoute
+              exact
+              path="/room"
+              loggedIn={() => {
+                return this.checkLoggedIn()
+              }}
+              component={(props) => <Room {...props}/>}
+            />
+          </Switch>
+        </div>
+      </BrowserRouter>
+    );
+  }
 }
 
 export default App;
