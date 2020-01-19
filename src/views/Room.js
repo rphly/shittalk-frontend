@@ -182,6 +182,7 @@ render() {
 			<Layout>
 				<Spin spinning={!isLoaded || visible}>
 						<Modal
+								//style={{position: `fixed`}}
 								title="Your session has expired."
 								visible={showValidateOTPModal}
 								onOk={this.validateOTP}
@@ -202,6 +203,10 @@ render() {
 											name="otp"
 											placeholder="eg. 306708"
 											onChange={this.onChange}
+											onFocus={function () {
+												window.scrollTo(0, 0);
+												document.body.scrollTop = 0;
+											}}
 											/>
 								</div>
 						</Spin>
@@ -220,6 +225,10 @@ render() {
 								width: `80%`
 							}}
 							placeholder="eg. Noobmaster69"
+							onFocus={() => {
+								window.scrollTo(0, 0);
+								document.body.scrollTop = 0;
+							}}
 						/>
 						<div style={{paddingTop: 20}}>
 							Your colour: <span style={{ color: colour }}>{colour}</span> <Badge color={colour}/>

@@ -24,7 +24,13 @@ export default class AppLayout extends Component {
                 style={{
                 }}>
 
-                <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+                <script type="text/javascript">
+                    $(document).ready(function() {
+                        document.ontouchmove = function(e){
+                            e.preventDefault();
+                            }
+                    });
+                </script>
 
                 <Modal
                     title="Are you sure you want to exit?"
