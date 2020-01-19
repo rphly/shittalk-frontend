@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Layout, Menu, Button } from 'antd';
+import { Layout, Menu, Button, Modal } from 'antd';
 const { Header, Content } = Layout;
 
 export default class AppLayout extends Component {
@@ -7,21 +7,40 @@ export default class AppLayout extends Component {
         super()
 
         this.state = {
-            
+            showLogoutModal: false
         }
     }
 
+    handleOk = () => {
+        sessionStorage.removeItem("token")
+        window.location.href = `/`
+    }
+
     render() {
+        const { showLogoutModal } = this.state;
         return (
             <Layout 
                 className="layout" 
                 style={{
                 }}>
+
+                <Modal
+                    title="Are you sure you want to exit?"
+
+                    visible={showLogoutModal}
+                    onOk={this.handleOk}
+                    onCancel={() => { this.setState({ showLogoutModal: false }) }}
+                >
+                You will have to re-enter the chat with an access code.
+                </Modal>
+                
                 <div style={{
                     backgroundColor: "#073069",
                     padding: 10
                 }}>
-                    <Button style={{float: `right`}}>
+                    <Button onClick={()=>{
+                        this.setState({ showLogoutModal: true })
+                    }} style={{float: `right`}}>
                         Exit
                     </Button>
                 </div>

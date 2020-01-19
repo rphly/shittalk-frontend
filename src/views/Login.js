@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { Button, Input, Spin } from 'antd';
 import Layout from '../container/Layout';
 import { BrowserRouter } from 'react-router-dom';
+import axios from "axios";
 
 export default class Login extends Component {
 
@@ -14,26 +15,19 @@ export default class Login extends Component {
         }
     }
 
-    validateToken() {
-        // call django
-        return {
-            token: "token",
-            roomID: "5zeibORPXl9LCgaAxOFL"
-        }
-    }
-
     login() {
         this.setState({
             isLoading: true
         })
 
-        var res = this.validateToken();
-        
-        if (res) {
-            // setting token
-            sessionStorage.setItem("token", res.token);
-            this.props.history.push(`/room?id=${res["roomID"]}`);
-        }
+        axios.get(`https://shit-talk-django.herokuapp.com/api/chatrooms/${this.state.otp}`).then((res) => {
+            console.log(res.request)
+            if (res.status === 200) {
+                // setting token
+                sessionStorage.setItem("token", res.data.token);
+                this.props.history.push(`/room?id=${res.data["data"]["chatroom"]["key"]}`);
+            }
+        })
     }
 
     onChange = (e) => {
