@@ -1,4 +1,5 @@
-import firebase from 'firebase'
+import { firebase } from '@firebase/app';
+import '@firebase/firestore'
 
 const config = {
     apiKey: "AIzaSyBvNEL6wQ6bDBJDmCCYgIBXw1Qe0hTZ7Tk",
@@ -11,9 +12,6 @@ const config = {
     measurementId: "G-0BGQ03940K"
 }
 firebase.initializeApp(config)
-firebase.firestore().settings({
-})
 
-export const fb = firebase
 export const db = firebase.firestore()
 //export const myStorage = firebase.storage()

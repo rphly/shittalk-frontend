@@ -11,7 +11,8 @@ export default class Login extends Component {
 
         this.state = {
             isLoading: false,
-            otp: null
+            otp: null,
+            showErrorMessage: false
         }
     }
 
@@ -28,6 +29,12 @@ export default class Login extends Component {
                 this.props.history.push(`/room?id=${res.data["data"]["chatroom"]["key"]}`);
             }
         })
+        .catch((err) => {
+            this.setState({
+                isLoading: false,
+                showErrorMessage: true
+            })
+        })
     }
 
     onChange = (e) => {
@@ -37,7 +44,7 @@ export default class Login extends Component {
     }
 
     render() {
-        const { isLoading, otp } = this.state
+        const { isLoading, otp, showErrorMessage } = this.state
         return (
             <Layout>
                 <div style={{
@@ -70,6 +77,7 @@ export default class Login extends Component {
                             </Button>
                         </div>
                     </Spin>
+                    {showErrorMessage ? <span style={{color: `red`}}>Invalid access code</span> : null}
                 </div>
             </Layout>
         )

@@ -63,10 +63,17 @@ handleOk = (e) => {
 }
 
 validateOTP = () => {
+	this.setState({
+		isValidatingOtp: true
+	})
 	axios.get(`https://shit-talk-django.herokuapp.com/api/chatrooms/${this.state.otp}`)
 	.then((res) => {
 		if (res.status === 200) {
 			sessionStorage.setItem("token", res.data.token)
+			this.setState({
+				isValidatingOTP: false,
+				showValidateOTPModal: false
+			})
 		}
 	})
 }
@@ -74,7 +81,24 @@ validateOTP = () => {
 validateToken = () => {
 	let token = sessionStorage.getItem("token")
 	if (token !== null) {
-		// axios.post()
+		let form = new FormData()
+		form.set("Token", token)
+
+		axios.post(`https://shit-talk-django.herokuapp.com/api/chatrooms/`, form).then((res) => {
+			if (res.status === 200) {
+				// do nothing
+			}
+			console.log(res) 
+		})
+		.catch((err) => {
+			console.log(err.response)
+			if (err.response.status === 403) {
+				// expired
+				this.setState({
+					showValidateOTPModal: true,
+				})
+			}
+		})
 	} else {
 		window.location.href = `/`
 	}
@@ -126,7 +150,8 @@ onSubmit = () => {
 	let msg = this.state.messageBody;
 	var pattern = /^(\/pin)\s(\S.*)/g;
 	var match = pattern.exec(msg);
-	if (match[1] == '/pin') {
+	
+	if (match !== null  && match[1] == '/pin') {
 		// need to submit pin
 		this.handlePin(match[2])
 	} else {
@@ -144,6 +169,8 @@ componentDidMount = () => {
 				pins: data.pins,
 				isLoaded: true
 			})
+
+			this.validateToken();
 		}.bind(this)
 	);
 }
@@ -157,7 +184,10 @@ render() {
 						<Modal
 								title="Your session has expired."
 								visible={showValidateOTPModal}
-								onOk={this.handleOk}
+								onOk={this.validateOTP}
+								onCancel={
+									() => {window.location.href='/'}
+								}
 							>
 						<div>Enter the OTP displayed on the screen to continue</div>
 						<Spin spinning={this.state.isValidatingOTP}>
@@ -216,7 +246,7 @@ render() {
 							display: `flex`,
 							flexDirection: `column`,
 							flex: 1,
-							height: 500,
+							height: 400,
 							overflowY: `scroll`,
 							marginBottom: 20,
 						}}
